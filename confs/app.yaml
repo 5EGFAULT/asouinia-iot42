@@ -16,7 +16,7 @@ spec:
         - name: app-container
           # image: wil42/playground:v1
           image: hashicorp/http-echo
-          args: ["-text=Hello from app1", "-listen=:8888"]
+          args: ["-text=Hello from app2", "-listen=:8888"]
           ports:
             - containerPort: 8888
 
