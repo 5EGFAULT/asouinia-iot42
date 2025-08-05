@@ -13,7 +13,6 @@ spec:
     spec:
       containers:
         - name: app-container
-          # image: wil42/playground:v1
           image: hashicorp/http-echo
           args: ["-text=Hello from app12", "-listen=:8888"]
           ports:
@@ -38,21 +37,21 @@ spec:
 apiVersion: apps/v1
 kind: ReplicaSet
 metadata:
-  name: extra-rs
+  name: app-dpl-rs
 spec:
-  replicas: 2
+  replicas: 1
   selector:
     matchLabels:
-      app: extra-rs
+      app: app-dpl
   template:
     metadata:
       labels:
-        app: extra-rs
+        app: app-dpl
     spec:
       containers:
-        - name: extra-container
+        - name: app-container
           image: hashicorp/http-echo
-          args: ["-text=Hello from extra RS", "-listen=:8888"]
+          args: ["-text=Hello from app12", "-listen=:8888"]
           ports:
             - containerPort: 8888
 
@@ -60,11 +59,10 @@ spec:
 apiVersion: v1
 kind: Endpoints
 metadata:
-  name: app-service-manual
+  name: app-service
 subsets:
   - addresses:
       - ip: 10.10.10.101
-      - ip: 10.10.10.102
     ports:
       - port: 8888
         protocol: TCP
@@ -73,9 +71,9 @@ subsets:
 apiVersion: discovery.k8s.io/v1
 kind: EndpointSlice
 metadata:
-  name: app-service-manual-slice
+  name: app-service
   labels:
-    kubernetes.io/service-name: app-service-manual
+    kubernetes.io/service-name: app-service
 addressType: IPv4
 ports:
   - name: "http"
@@ -84,9 +82,5 @@ ports:
 endpoints:
   - addresses:
       - 10.10.10.101
-    conditions:
-      ready: true
-  - addresses:
-      - 10.10.10.102
     conditions:
       ready: true
