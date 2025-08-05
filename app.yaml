@@ -1,40 +1,35 @@
-apiVersion: argoproj.io/v1alpha1
-kind: AppProject
+apiVersion: apps/v1
+kind: Deployment
 metadata:
-  name: development
-  finalizers:
-    - resources-finalizer.argocd.argoproj.io
+  name: app-dpl
 spec:
-  sourceRepos:
-    - "*"
-  destinations:
-    - server: https://kubernetes.default.svc
-      namespace: dev
-  clusterResourceWhitelist:
-    - group: "*"
-      kind: "*"
-  namespaceResourceWhitelist:
-    - group: "*"
-      kind: "*"
+  selector:
+    matchLabels:
+      app: app-dpl
+  template:
+    metadata:
+      labels:
+        app: app-dpl
+    spec:
+      containers:
+        - name: app-container
+          # image: wil42/playground:v1
+          image: hashicorp/http-echo
+          args: ["-text=Hello from app12", "-listen=:8888"]
+          ports:
+            - containerPort: 8888
 
 ---
-apiVersion: argoproj.io/v1alpha1
-kind: Application
+apiVersion: v1
+kind: Service
 metadata:
-  name: app
+  name: app-service
 spec:
-  project: development
-  source:
-    repoURL: https://github.com/5EGFAULT/iot-p3.git
-    path: "."
-    directory:
-      include: "app.yaml"
-  destination:
-    server: https://kubernetes.default.svc
-    namespace: dev
-  syncPolicy:
-    automated:
-      prune: true
-      selfHeal: true
-    syncOptions:
-      - CreateNamespace=true
+  selector:
+    app: app-dpl
+  ports:
+    - protocol: TCP
+      port: 8888
+      targetPort: 8888
+      nodePort: 30088
+  type: NodePort
