@@ -13,10 +13,7 @@ spec:
     spec:
       containers:
         - name: app-container
-          image: 5egfault/42iot:V2
-          # image: wil42/playground:v1
-          # image: hashicorp/http-echo
-          # args: ["-text=Hello from app 0000", "-listen=:8888"]
+          image: 5egfault/42iot:V1
           ports:
             - containerPort: 8888
 
