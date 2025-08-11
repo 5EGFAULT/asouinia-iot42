@@ -13,7 +13,7 @@ spec:
     spec:
       containers:
         - name: app-container
-          image: 5egfault/42iot:V1
+          image: 5egfault/42iot:V2
           ports:
             - containerPort: 8888
 
